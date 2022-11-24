@@ -7,6 +7,7 @@ const observer = new IntersectionObserver((entries) => {
             entry.target.classList.remove('show')
         }
     })
+}, {
 })
 
 const hiddenElements = document.querySelectorAll('.hidden')
