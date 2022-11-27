@@ -1,7 +1,7 @@
 import "./style.css";
 import * as THREE from "./three.js/three.js/build/three.module.js";
 
-var renderer, scene, camera, textureLoader, ren;
+var renderer, scene, camera, textureLoader, moon;
 
 function createTexture(path) {
   return textureLoader.load(path);
@@ -38,10 +38,25 @@ function createRen() {
     new THREE.MeshBasicMaterial({ map: renTexture })
   );
 
-  // ren.position.set(0, 0 ,0)
-  ren.position.set(10, 0,-10)
+  ren.position.set(10, 0, -10)
   scene.add(ren);
   return ren
+}
+
+function createMoon() {
+  const moon = new THREE.Mesh(
+    new THREE.SphereGeometry(3, 32, 32),
+    new THREE.MeshStandardMaterial({
+      map: createTexture('./assets/moon.jpg'),
+      normalMap: createTexture('./assets/normal.jpg'),
+    })
+  );
+  moon.position.z = 30
+  moon.position.x = -10
+
+  scene.add(moon);
+
+  return moon
 }
 
 function init() {
@@ -51,8 +66,8 @@ function init() {
   const ASPECT = window.innerWidth / window.innerHeight;
 
   camera = new THREE.PerspectiveCamera(FOV, ASPECT, 0.1, 1000);
-  camera.position.set(0, 0, 10);
-  camera.lookAt(0, 0, 0);
+  camera.position.setZ(30);
+  camera.position.setX(-3);
 
   renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector("#bg"),
@@ -68,7 +83,7 @@ function init() {
   scene.add(ambientLight);
 
   Array(4000).fill().forEach(createStar);
-  // ren = createRen()
+  moon = createMoon();
 }
 
 function scrollingAction() {
@@ -76,14 +91,16 @@ function scrollingAction() {
   camera.position.z = t * -0.01;
   camera.position.x = t * -0.0002;
   camera.rotation.y = t * -0.0002;
+  moon.rotation.x += 0.05;
+  moon.rotation.y += 0.075;
+  moon.rotation.z += 0.05;
 }
 
 document.body.onscroll = scrollingAction;
 
 function render() {
   requestAnimationFrame(render);
-  // ren.rotation.x += 0.01
-  // ren.rotation.y += 0.01
+  moon.rotation.x += 0.005
   renderer.render(scene, camera);
 }
 
